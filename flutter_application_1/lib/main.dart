@@ -7,6 +7,7 @@ void main() {
   ));
 }
 
+// ===== CLASSES =====
 
 class Escolaridade {
   String nivel;
@@ -26,14 +27,20 @@ class Recomendacao {
 class Curriculo {
   String nome;
   String perfil;
+  String imagemPath;
+
   List<Escolaridade> escolaridades = [];
   List<Projetos> projetos = [];
   List<Recomendacao> recomendacoes = [];
 
-  Curriculo({required this.nome, required this.perfil});
+  Curriculo({
+    required this.nome,
+    required this.perfil,
+    required this.imagemPath,
+  });
 }
 
-
+// ===== TELA CADASTRO =====
 
 class TelaCadastro extends StatefulWidget {
   @override
@@ -41,7 +48,11 @@ class TelaCadastro extends StatefulWidget {
 }
 
 class _TelaCadastroState extends State<TelaCadastro> {
-  Curriculo meuCurriculo = Curriculo(nome: "", perfil: "");
+  Curriculo meuCurriculo = Curriculo(
+    nome: "",
+    perfil: "",
+    imagemPath: 'images/eu.jpg',
+  );
 
   TextEditingController nomeController = TextEditingController();
   TextEditingController perfilController = TextEditingController();
@@ -52,19 +63,19 @@ class _TelaCadastroState extends State<TelaCadastro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Meu Currículo")),
+      appBar: AppBar(title: Text("Editar Currículo")),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: ListView(
           children: [
-            
+            // AVATAR MELHORADO
+            AvatarWidget(imagemPath: meuCurriculo.imagemPath),
+
             CampoTexto("Nome", nomeController),
             CampoTexto("Perfil", perfilController),
 
-            SizedBox(height: 20),
-
-            
-            Text("Escolaridade"),
+            // ===== ESCOLARIDADE =====
+            SecaoTitulo("Escolaridade"),
             CampoTexto("Adicionar escolaridade", escolaridadeController),
             ElevatedButton(
               onPressed: () {
@@ -77,12 +88,10 @@ class _TelaCadastroState extends State<TelaCadastro> {
               },
               child: Text("Adicionar"),
             ),
+            ...meuCurriculo.escolaridades.map((e) => ItemLista(e.nivel)),
 
-            ...meuCurriculo.escolaridades.map((e) => Text("- ${e.nivel}")),
-
-            SizedBox(height: 20),
-
-            Text("Projetos"),
+            // ===== PROJETOS =====
+            SecaoTitulo("Projetos"),
             CampoTexto("Adicionar projeto", projetoController),
             ElevatedButton(
               onPressed: () {
@@ -95,12 +104,10 @@ class _TelaCadastroState extends State<TelaCadastro> {
               },
               child: Text("Adicionar"),
             ),
+            ...meuCurriculo.projetos.map((p) => ItemLista(p.nome)),
 
-            ...meuCurriculo.projetos.map((p) => Text("- ${p.nome}")),
-
-            SizedBox(height: 20),
-
-            Text("Recomendações"),
+            // ===== RECOMENDAÇÕES =====
+            SecaoTitulo("Recomendações"),
             CampoTexto("Adicionar recomendação", recomendacaoController),
             ElevatedButton(
               onPressed: () {
@@ -113,10 +120,9 @@ class _TelaCadastroState extends State<TelaCadastro> {
               },
               child: Text("Adicionar"),
             ),
+            ...meuCurriculo.recomendacoes.map((r) => ItemLista(r.texto)),
 
-            ...meuCurriculo.recomendacoes.map((r) => Text("- ${r.texto}")),
-
-            SizedBox(height: 30),
+            SizedBox(height: 20),
 
             ElevatedButton(
               onPressed: () {
@@ -140,6 +146,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
   }
 }
 
+// ===== TELA EXIBIÇÃO =====
 
 class TelaExibicao extends StatelessWidget {
   final Curriculo curriculo;
@@ -154,30 +161,21 @@ class TelaExibicao extends StatelessWidget {
         padding: EdgeInsets.all(16),
         child: ListView(
           children: [
-            CircleAvatar(
-              radius: 40,
-              child: Icon(Icons.person, size: 40),
-            ),
+            AvatarWidget(imagemPath: curriculo.imagemPath),
 
             SizedBox(height: 20),
 
             Text("Nome: ${curriculo.nome}"),
             Text("Perfil: ${curriculo.perfil}"),
 
-            SizedBox(height: 20),
+            SecaoTitulo("Escolaridade"),
+            ...curriculo.escolaridades.map((e) => ItemLista(e.nivel)),
 
-            Text("Escolaridade"),
-            ...curriculo.escolaridades.map((e) => Text("- ${e.nivel}")),
+            SecaoTitulo("Projetos"),
+            ...curriculo.projetos.map((p) => ItemLista(p.nome)),
 
-            SizedBox(height: 20),
-
-            Text("Projetos"),
-            ...curriculo.projetos.map((p) => Text("- ${p.nome}")),
-
-            SizedBox(height: 20),
-
-            Text("Recomendações"),
-            ...curriculo.recomendacoes.map((r) => Text("- ${r.texto}")),
+            SecaoTitulo("Recomendações"),
+            ...curriculo.recomendacoes.map((r) => ItemLista(r.texto)),
           ],
         ),
       ),
@@ -185,7 +183,67 @@ class TelaExibicao extends StatelessWidget {
   }
 }
 
+// ===== WIDGETS =====
 
+// 🔥 AVATAR MELHORADO
+class AvatarWidget extends StatelessWidget {
+  final String imagemPath;
+
+  AvatarWidget({required this.imagemPath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 110,
+        height: 110,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: AssetImage(imagemPath),
+            fit: BoxFit.cover,
+            alignment: Alignment.topCenter, // 👈 AJUSTE IMPORTANTE
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Título
+class SecaoTitulo extends StatelessWidget {
+  final String texto;
+
+  SecaoTitulo(this.texto);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        texto,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+
+// Item
+class ItemLista extends StatelessWidget {
+  final String texto;
+
+  ItemLista(this.texto);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 10, top: 4),
+      child: Text("- $texto"),
+    );
+  }
+}
+
+// Campo texto
 class CampoTexto extends StatelessWidget {
   final String label;
   final TextEditingController controller;
