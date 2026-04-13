@@ -7,6 +7,7 @@ void main() {
   ));
 }
 
+
 class Escolaridade {
   String nivel;
   Escolaridade(this.nivel);
@@ -83,9 +84,22 @@ class _TelaCadastroState extends State<TelaCadastro> {
               },
               child: Text("Adicionar"),
             ),
-            ...meuCurriculo.escolaridades.map((e) => ItemLista(e.nivel)),
 
-            // ===== PROJETOS =====
+            ...meuCurriculo.escolaridades.asMap().entries.map((entry) {
+              int index = entry.key;
+              var e = entry.value;
+
+              return ItemListaDismissible(
+                texto: e.nivel,
+                chave: Key(e.nivel + index.toString()),
+                onDelete: () {
+                  setState(() {
+                    meuCurriculo.escolaridades.removeAt(index);
+                  });
+                },
+              );
+            }),
+
             SecaoTitulo("Projetos"),
             CampoTexto("Adicionar projeto", projetoController),
             ElevatedButton(
@@ -99,7 +113,21 @@ class _TelaCadastroState extends State<TelaCadastro> {
               },
               child: Text("Adicionar"),
             ),
-            ...meuCurriculo.projetos.map((p) => ItemLista(p.nome)),
+
+            ...meuCurriculo.projetos.asMap().entries.map((entry) {
+              int index = entry.key;
+              var p = entry.value;
+
+              return ItemListaDismissible(
+                texto: p.nome,
+                chave: Key(p.nome + index.toString()),
+                onDelete: () {
+                  setState(() {
+                    meuCurriculo.projetos.removeAt(index);
+                  });
+                },
+              );
+            }),
 
             SecaoTitulo("Recomendações"),
             CampoTexto("Adicionar recomendação", recomendacaoController),
@@ -114,7 +142,21 @@ class _TelaCadastroState extends State<TelaCadastro> {
               },
               child: Text("Adicionar"),
             ),
-            ...meuCurriculo.recomendacoes.map((r) => ItemLista(r.texto)),
+
+            ...meuCurriculo.recomendacoes.asMap().entries.map((entry) {
+              int index = entry.key;
+              var r = entry.value;
+
+              return ItemListaDismissible(
+                texto: r.texto,
+                chave: Key(r.texto + index.toString()),
+                onDelete: () {
+                  setState(() {
+                    meuCurriculo.recomendacoes.removeAt(index);
+                  });
+                },
+              );
+            }),
 
             SizedBox(height: 20),
 
@@ -177,8 +219,7 @@ class TelaExibicao extends StatelessWidget {
 }
 
 
-
-
+// Avatar melhorado
 class AvatarWidget extends StatelessWidget {
   final String imagemPath;
 
@@ -195,7 +236,7 @@ class AvatarWidget extends StatelessWidget {
           image: DecorationImage(
             image: AssetImage(imagemPath),
             fit: BoxFit.cover,
-            alignment: Alignment.topCenter, // 
+            alignment: Alignment.topCenter,
           ),
         ),
       ),
@@ -221,7 +262,6 @@ class SecaoTitulo extends StatelessWidget {
   }
 }
 
-// Item
 class ItemLista extends StatelessWidget {
   final String texto;
 
@@ -232,6 +272,43 @@ class ItemLista extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(left: 10, top: 4),
       child: Text("- $texto"),
+    );
+  }
+}
+
+class ItemListaDismissible extends StatelessWidget {
+  final String texto;
+  final VoidCallback onDelete;
+  final Key chave;
+
+  ItemListaDismissible({
+    required this.texto,
+    required this.onDelete,
+    required this.chave,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: chave,
+      direction: DismissDirection.endToStart,
+
+      confirmDismiss: (direction) async {
+        onDelete(); // remove da lista
+        return true;
+      },
+
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.only(right: 20),
+        child: Icon(Icons.delete, color: Colors.white),
+      ),
+
+      child: Padding(
+        padding: EdgeInsets.only(left: 10, top: 4),
+        child: Text("- $texto"),
+      ),
     );
   }
 }
