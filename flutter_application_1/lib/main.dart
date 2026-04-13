@@ -294,7 +294,7 @@ class ItemListaDismissible extends StatelessWidget {
       direction: DismissDirection.endToStart,
 
       confirmDismiss: (direction) async {
-        onDelete(); // remove da lista
+        onDelete(); 
         return true;
       },
 
