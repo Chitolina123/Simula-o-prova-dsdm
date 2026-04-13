@@ -7,8 +7,6 @@ void main() {
   ));
 }
 
-// ===== CLASSES =====
-
 class Escolaridade {
   String nivel;
   Escolaridade(this.nivel);
@@ -40,7 +38,6 @@ class Curriculo {
   });
 }
 
-// ===== TELA CADASTRO =====
 
 class TelaCadastro extends StatefulWidget {
   @override
@@ -68,13 +65,11 @@ class _TelaCadastroState extends State<TelaCadastro> {
         padding: EdgeInsets.all(16),
         child: ListView(
           children: [
-            // AVATAR MELHORADO
             AvatarWidget(imagemPath: meuCurriculo.imagemPath),
 
             CampoTexto("Nome", nomeController),
             CampoTexto("Perfil", perfilController),
 
-            // ===== ESCOLARIDADE =====
             SecaoTitulo("Escolaridade"),
             CampoTexto("Adicionar escolaridade", escolaridadeController),
             ElevatedButton(
@@ -106,7 +101,6 @@ class _TelaCadastroState extends State<TelaCadastro> {
             ),
             ...meuCurriculo.projetos.map((p) => ItemLista(p.nome)),
 
-            // ===== RECOMENDAÇÕES =====
             SecaoTitulo("Recomendações"),
             CampoTexto("Adicionar recomendação", recomendacaoController),
             ElevatedButton(
@@ -146,7 +140,6 @@ class _TelaCadastroState extends State<TelaCadastro> {
   }
 }
 
-// ===== TELA EXIBIÇÃO =====
 
 class TelaExibicao extends StatelessWidget {
   final Curriculo curriculo;
@@ -183,9 +176,9 @@ class TelaExibicao extends StatelessWidget {
   }
 }
 
-// ===== WIDGETS =====
 
-// 🔥 AVATAR MELHORADO
+
+
 class AvatarWidget extends StatelessWidget {
   final String imagemPath;
 
@@ -202,7 +195,7 @@ class AvatarWidget extends StatelessWidget {
           image: DecorationImage(
             image: AssetImage(imagemPath),
             fit: BoxFit.cover,
-            alignment: Alignment.topCenter, // 👈 AJUSTE IMPORTANTE
+            alignment: Alignment.topCenter, // 
           ),
         ),
       ),
